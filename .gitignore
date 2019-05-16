@@ -1,2 +1,5 @@
 /target
 **/*.rs.bk
+/front/index.html
+/front/elm-stuff
+Cargo.lock
