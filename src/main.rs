@@ -74,14 +74,24 @@ fn main() {
                 .unwrap();
             //
         }
+        wbam_args::ArgChoice::Fail => {
+            //
+            //
+        }
         wbam_args::ArgChoice::Serve => {
             if !prep_status.shell_err_message() { return; }
             //
+            println!("Starting the service!");
+            //
+            // TODO : start serving
             //
         }
         wbam_args::ArgChoice::Compile => {
             if !prep_status.shell_err_message() { return; }
             //
+            println!("starting compilation!");
+            //
+            // TODO : start compiling
             //
         }
     }

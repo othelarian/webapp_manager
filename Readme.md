@@ -18,6 +18,12 @@ If you're lost offline, there is an 'help' argument ;-)
 * with the 'compile' subcommand you just have to specify the 'FILE', and if you want, a 'OUTPUT', and if you can, an '--optimized', to generate your final index.html, without using the GUI
 * with the 'serve' subcommand you can go no-GUI, but with the same options
 
+### IMPORTANT: Priorities
+
+Compile > Serve > Gui
+
+Because Gui is coming without a subcommand, as the default behavior, and 'compile' is the most specific mode.
+
 ## TODO
 
 * args of the 'compile' and the 'serve' subcommands

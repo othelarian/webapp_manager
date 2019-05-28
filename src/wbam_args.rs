@@ -1,11 +1,22 @@
 extern crate clap;
 
 use clap::{Arg,App,SubCommand};
+use std::path::Path;
 
 pub enum ArgChoice {
     Gui,
     Compile,
-    Serve
+    Serve,
+    Fail
+}
+
+impl ArgChoice {
+    fn create_compile(path: String) -> ArgChoice {
+        //
+        //
+        ArgChoice::Compile
+        //
+    }
 }
 
 pub fn get_args() -> ArgChoice {
@@ -23,12 +34,32 @@ pub fn get_args() -> ArgChoice {
     //
     // TODO : manage the subcommands
     //
+    if let Some(matches) = matches.subcommand_matches("compile") { // compile mode
+        //
+        // TODO : check if the file exists
+        //
+        let file = matches.value_of("FILE").unwrap();
+        //
+        //if (Path::new())
+        //
+        ArgChoice::Compile
+        //
+    } else if let Some(matches) = matches.subcommand_matches("serve") {
+        //
+        ArgChoice::Serve
+        //
+    } else {
+        //
+        ArgChoice::Gui
+        //
+    }
     //
     /*if matches.is_present("compile") {
         //
         ArgChoice::Compile
         //
     }*/
+    //
 }
 
 fn arg_dir<'a, 'b>() -> Arg<'a, 'b> {
@@ -61,6 +92,7 @@ fn go_compile<'a,'b>() -> App<'a,'b> {
     SubCommand::with_name("compile")
         .about("Compile your project instead of served it or use GUI")
         .arg(Arg::with_name("FILE")
+            .required(true)
             .help("the name of the file we want to compile"))
         .arg(Arg::with_name("OUTPUT")
             .short("o")
