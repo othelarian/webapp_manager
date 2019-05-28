@@ -1,65 +1,23 @@
 extern crate web_view;
 
-use std::str;
-use std::process::Command;
+use std::process;
 use web_view::*;
 
+use webapp_manager::PrepStatus;
+
 mod wbam_args;
-
-enum PrepStatus {
-    None(bool),
-    Installed,
-    Optimized
-}
-
-impl PrepStatus {
-    fn check() -> PrepStatus {
-        let (res0, res1) = if cfg!(target_os = "windows") {
-            (
-                Command::new("cmd").args(&["/C", "elm --version"]).output(),
-                Command::new("cmd").args(&["/C", "uglify --version"]).output()
-            )
-        } else {
-            (
-                Command::new("elm").arg("--version").output(),
-                Command::new("uglify").arg("--version").output()
-            )
-        };
-        match res0 {
-            Ok(output1) => {
-                match str::from_utf8(&output1.stdout).expect("").trim() {
-                    "0.19.0" => {
-                        match res1 {
-                            Ok(_) => PrepStatus::Optimized,
-                            Err(_) => PrepStatus::Installed
-                        }
-                    }
-                    &_ => PrepStatus::None(true)
-                }
-            }
-            Err(_) => PrepStatus::None(false)
-        }
-    }
-
-    fn shell_err_message(&self) -> bool {
-        match self {
-            PrepStatus::None(b) => {
-                println!("ERROR ==> elm executable not installed!");
-                if b == &true { println!("The version of elm installed is not 0.19.0"); };
-                false
-            },
-            _ => true
-        }
-    }
-}
 
 fn main() {
     // check if external executable are installed
     let prep_status = PrepStatus::check();
-    // parse the args
+    //
+    // TODO : closure for the prep uninstalled case
+    //
+    // parse the args and run
     match wbam_args::get_args() {
         wbam_args::ArgChoice::Gui => {
             //
+            // TODO : move all the logic in the lib !!!!!
             // TODO : add all the comm system
             //
             web_view::builder()
@@ -75,12 +33,14 @@ fn main() {
             //
         }
         wbam_args::ArgChoice::Serve => {
-            if !prep_status.shell_err_message() { return; }
+            if let PrepStatus::None(e) = prep_status { /* TODO */ }
+            //
             //
             //
         }
         wbam_args::ArgChoice::Compile => {
-            if !prep_status.shell_err_message() { return; }
+            if let PrepStatus::None(e) = prep_status { /* TODO */ }
+            //
             //
             //
         }
@@ -93,4 +53,9 @@ fn main() {
     // TODO : if "headless", check if there is an arg for the path, otherwise ask for it
     //
     // TODO : if "headless", check if it's only the reactor, or if we need output
+    //
+    if let Err(e) = run(prep_status) {
+        println!("{}", e);
+        process::exit(1);
+    }
 }

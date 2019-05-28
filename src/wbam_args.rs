@@ -23,6 +23,7 @@ pub fn get_args() -> ArgChoice {
     //
     // TODO : manage the subcommands
     //
+    ArgChoice::Gui
     //
     /*if matches.is_present("compile") {
         //
