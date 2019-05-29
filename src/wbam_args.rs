@@ -6,8 +6,7 @@ use std::path::Path;
 pub enum ArgChoice {
     Gui,
     Compile,
-    Serve,
-    Fail
+    Serve
 }
 
 impl ArgChoice {
@@ -36,11 +35,6 @@ pub fn get_args() -> ArgChoice {
     //
     if let Some(matches) = matches.subcommand_matches("compile") { // compile mode
         //
-        // TODO : check if the file exists
-        //
-        let file = matches.value_of("FILE").unwrap();
-        //
-        //if (Path::new())
         //
         ArgChoice::Compile
         //

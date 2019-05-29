@@ -41,6 +41,19 @@ impl PrepStatus {
 
 // HANDLE GUI LOGIC
 
-// HANDLE COMPILE LOGIC
 
 // HANDLE SERVE LOGIC
+
+// HANDLE COMPILE LOGIC
+
+pub mod compile_mode {
+    pub fn compile() {
+        //
+        // TODO : check if the file exists
+        //
+        let file = matches.value_of("FILE").unwrap();
+        //
+        //if (Path::new())
+        //
+    }
+}

@@ -10,9 +10,12 @@ mod wbam_args;
 fn main() {
     // check if external executable are installed
     let prep_status = PrepStatus::check();
-    //
-    // TODO : closure for the prep uninstalled case
-    //
+    let kill_app = |prep: &PrepStatus| {
+        if let PrepStatus::None(e) = prep {
+            println!("{}", e);
+            process::exit(1);
+        }
+    };
     // parse the args and run
     match wbam_args::get_args() {
         wbam_args::ArgChoice::Gui => {
@@ -32,12 +35,8 @@ fn main() {
                 .unwrap();
             //
         }
-        wbam_args::ArgChoice::Fail => {
-            //
-            //
-        }
         wbam_args::ArgChoice::Serve => {
-            if let PrepStatus::None(e) = prep_status { /* TODO */ }
+            kill_app(&prep_status);
             //
             //
             println!("Starting the service!");
@@ -46,12 +45,14 @@ fn main() {
             //
         }
         wbam_args::ArgChoice::Compile => {
-            if let PrepStatus::None(e) = prep_status { /* TODO */ }
+            kill_app(&prep_status);
             //
             //
             println!("starting compilation!");
             //
             // TODO : start compiling
+            //
+            compile_mode::compile(); // with args
             //
         }
     }
@@ -64,8 +65,4 @@ fn main() {
     //
     // TODO : if "headless", check if it's only the reactor, or if we need output
     //
-    if let Err(e) = run(prep_status) {
-        println!("{}", e);
-        process::exit(1);
-    }
 }
