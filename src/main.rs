@@ -1,68 +1,41 @@
 extern crate web_view;
 
 use std::process;
-use web_view::*;
 
-use webapp_manager::PrepStatus;
+use webapp_manager::prep_mode;
+use webapp_manager::wbam_args;
 
-mod wbam_args;
+//mod wbam_args;
 
 fn main() {
     // check if external executable are installed
-    let prep_status = PrepStatus::check();
-    let kill_app = |prep: &PrepStatus| {
-        if let PrepStatus::None(e) = prep {
+    let prep_status = prep_mode::check();
+    let kill_app = |prep: &prep_mode::PrepStatus| {
+        if let prep_mode::PrepStatus::None(e) = prep {
             println!("{}", e);
             process::exit(1);
         }
     };
     // parse the args and run
-    match wbam_args::get_args() {
-        wbam_args::ArgChoice::Gui => {
-            //
-            // TODO : move all the logic in the lib !!!!!
-            // TODO : add all the comm system
-            //
-            web_view::builder()
-                .title("WebApp Manager")
-                .content(Content::Html(include_str!("../front/index.html")))
-                .size(300, 400)
-                .resizable(true)
-                .debug(true)
-                .user_data(())
-                .invoke_handler(|_webview, _arg| Ok(()))
-                .run()
-                .unwrap();
-            //
+    let res = match wbam_args::get_args() {
+        wbam_args::ArgChoice::Gui(args) => {
+            use webapp_manager::gui_mode;
+            gui_mode::gui(&prep_status, &args)
         }
-        wbam_args::ArgChoice::Serve => {
+        wbam_args::ArgChoice::Serve(args) => {
             kill_app(&prep_status);
-            //
-            //
-            println!("Starting the service!");
-            //
-            // TODO : start serving
-            //
+            use webapp_manager::serve_mode;
+            serve_mode::serve(&prep_status, &args)
         }
-        wbam_args::ArgChoice::Compile => {
+        wbam_args::ArgChoice::Compile(args) => {
             kill_app(&prep_status);
-            //
-            //
-            println!("starting compilation!");
-            //
-            // TODO : start compiling
-            //
-            compile_mode::compile(); // with args
-            //
+            use webapp_manager::compile_mode;
+            compile_mode::compile(&prep_status, &args)
         }
+    };
+    // finish the program
+    match res {
+        Ok(_) => (),
+        Err(e) => println!("QUIT WITH MESSAGE:\n{}",e)
     }
-    //
-    // TODO : if "compile", only execute the compile part
-    //
-    // TODO : if "compile", check for the "optimized", if we do, go for uglify (with a check)
-    //
-    // TODO : if "headless", check if there is an arg for the path, otherwise ask for it
-    //
-    // TODO : if "headless", check if it's only the reactor, or if we need output
-    //
 }
